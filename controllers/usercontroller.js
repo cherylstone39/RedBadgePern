@@ -4,24 +4,30 @@ const { Router } = require("express");
 const { User } = require("../models");
 const { UniqueConstraintError} = require("sequelize/lib/errors")
 const validateSession = require("../middleware/validate-session");
-
 const router = Router();
 
-
-router.post("/create", async function (req, res) {
-  let {firstName, lastName, email, password } = req.body.user
-  try{ const User = await UserModel.create({
+// ======================
+//    Register Account
+// ======================
+router.post("/register", validateSession, async function (req, res) {
+  let {firstName, lastName, email, password } = req.body;
+  try{ const User = await User.register({
     firstName,
     lastName,
     email,
-    password: bcrypt.hashSync(password, 13),
+    password: bcrypt.hashSync(password, 20),
   })
   let token = jwt.sign({id:User.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60* 24});
 
   res.status(201).json({
-    message: "User successfully created",
-    user: User,
-    sessionToken: token
+    message: "User successfully registered",
+    user: {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: bcrypt.hashSync(password, 20),
+      sessionToken: token
+    }
 });
   }catch(e){
     if(err instanceof UniqueConstraintError) {
@@ -35,40 +41,48 @@ router.post("/create", async function (req, res) {
 }
 });
 
-router.post("/login", async function (req, res) {
-  let {email, password} = req.user.body;
-  try{
-    let loginUser = await UserModel.findOne({
-      where: {
-          email: email,
-      },
-  });
-  if(loginUser) {
+/*
+======================
+      Login
+======================
+*/
 
-      let passwordComparison = await bcrypt.compare(password, loginUser.password);
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-      if (passwordComparison){
-
-      let token = jwt.sign({id:loginUser.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60* 24});
-
-    res.status(200).json({
-      user: loginUser,
-      message: "User successfully logged in!",
-      sessionToken: token
+  try {
+      let loginUser = await UserModel.findOne({
+          where: {
+              email: email,
+          },
       });
-  } else {
-      res.status(401).json({
-      message: "Incorrect email or password"
+
+      if (loginUser) {
+          let passwordComparison = await bcrypt.compare(password, loginUser.password);
+
+          if (passwordComparison) {
+              let token = jwt.sign({ id: loginUser.id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+
+              res.status(200).json({
+                  user: loginUser,
+                  message: "Login Succesful!",
+                  sessionToken: token
+              });
+          } else {
+              res.status(401).json({
+                  message: "Incorrect email or password"
+              });
+          }
+      } else {
+          res.status(401).json({
+              message: "Incorrect email or password"
+          });
+      }
+  
+  } catch (e) {
+      res.status(500).json({
+          message: "Login Failed"
       })
-  }
-  } else {
-      res.status(401).json({
-          message: "Incorrect email or password"
-      });
-  }
-
-  }catch(e){
-    res.status(500).json({message: "Failed to log in user"})
   }
 });
 

@@ -1,7 +1,8 @@
-const Express = require('express');
-const router = Express.Router();
+const router = require("express").Router();
+const validateJWT = require("../middleware/validate-session")
+const { RatingsModel } = require("../models");
 
-router.get('/practice', (req, res) => {
+router.get('/practice', validateJWT, (req, res) => {
     res.send('Hey this is practice')
 });
 
