@@ -13,7 +13,6 @@ const Recipe = db.define("recipe", {
   directions: {
     type: DataTypes.STRING,
     allowNull: false,
-    
   },
   timeToBake: {
     type: DataTypes.STRING, //number as well

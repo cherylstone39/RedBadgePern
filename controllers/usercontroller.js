@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Router } = require("express");
-const { User } = require("../models");
+const { User, RecipeModel } = require("../models");
 const { UniqueConstraintError } = require("sequelize/lib/errors");
 const validateSession = require("../middleware/validate-session");
 const router = Router();
@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
       firstName,
       lastName,
       email,
-      password: bcrypt.hashSync(password, 20),
+      password: bcrypt.hashSync(password, 13),
     });
     let token = jwt.sign({ id: newUser.id, email: newUser.email }, process.env.JWT_SECRET, {
       expiresIn: 60 * 60 * 24,
@@ -38,78 +38,82 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// router.get("/userinfo", async (req, res) => {
-//   try {
-//     await models.User.findAll({
-//       include: [
-//         {
-//           model: models.RecipeModel,
-//           include: [
-//             {
-//               model: models.RatingsModel,
-//             },
-//           ],
-//         },
-//       ],
-//     }).then((users) => {
-//       res.status(200).json({
-//         users: users,
-//       });
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       error: `Failed to retrieve users: ${err}`,
-//     });
-//   }
-// });
+router.get("/userinfo", async (req, res) => {
+  try {
+    await models.User.findAll({
+      include: [
+        {
+          model: models.RecipeModel,
+          include: [
+            {
+              model: models.RatingsModel,
+            },
+          ],
+        },
+      ],
+    }).then((users) => {
+      res.status(200).json({
+        users: users,
+      });
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: `Failed to retrieve users: ${err}`,
+    });
+  }
+});
 
-// /*
-// ======================
-//       Login
-// ======================
-// */
+/*
+======================
+      Login
+======================
+*/
 
-// router.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-//   try {
-//     let loginUser = await User.findOne({
-//       where: {
-//         email: email,
-//       },
-//     });
+  try {
+    let loginUser = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
 
-//     if (loginUser) {
-//       let passwordComparison = await bcrypt.compare(
-//         password,
-//         loginUser.password
-//       );
+    if (loginUser) {
+      let passwordComparison = await bcrypt.compare(
+        password,
+        loginUser.password
+      );
 
-//       if (passwordComparison) {
-//         let token = jwt.sign({ id: loginUser.id }, process.env.JWT_SECRET, {
-//           expiresIn: 60 * 60 * 24,
-//         });
+      if (passwordComparison) {
+        let token = jwt.sign({ id: loginUser.id }, process.env.JWT_SECRET, {
+          expiresIn: 60 * 60 * 24,
+        });
 
-//         res.status(200).json({
-//           user: loginUser,
-//           message: "Login Succesful!",
-//           sessionToken: token,
-//         });
-//       } else {
-//         res.status(401).json({
-//           message: "Incorrect email or password",
-//         });
-//       }
-//     } else {
-//       res.status(401).json({
-//         message: "Incorrect email or password",
-//       });
-//     }
-//   } catch (e) {
-//     res.status(500).json({
-//       message: "Login Failed",
-//     });
-//   }
-// });
+        res.status(200).json({
+          user: loginUser,
+          message: "Login Succesful!",
+          sessionToken: token,
+        });
+      } else {
+        res.status(401).json({
+          message: "Incorrect email or password",
+        });
+      }
+    } else {
+      res.status(401).json({
+        message: "Incorrect email or password",
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      message: "Login Failed",
+    });
+  }
+});
+/* Update */
+
+
+
 
 module.exports = router;
