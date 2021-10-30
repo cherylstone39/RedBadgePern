@@ -37,6 +37,7 @@ router.post("/register", async (req, res) => {
     }
   }
 });
+/*Get user data association info*/
 
 router.get("/userinfo", async (req, res) => {
   try {
@@ -111,7 +112,7 @@ router.post("/login", async (req, res) => {
     });
   }
 });
-/* Update */
+
 
 
 
