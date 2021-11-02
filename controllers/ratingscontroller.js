@@ -12,9 +12,9 @@ router.post('/create', validateSession, async (req, res) => {
 
     try {
         await RatingsModel.create({
-            ratingOfDessert: req.body.ratingOfDessert,
-            feedback : req.body.feedback,
-            recipeId: req.body.recipeId,
+            ratingOfDessert: req.body.ratings.ratingOfDessert,
+            feedback : req.body.ratings.feedback,
+            recipeId: req.body.recipe.id,
             userId: req.user.id
         })
         .then( ratings => {
