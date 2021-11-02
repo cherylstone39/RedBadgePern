@@ -20,6 +20,10 @@ const User = db.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
 });
 
 module.exports = User;

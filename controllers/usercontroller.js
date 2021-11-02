@@ -10,15 +10,16 @@ const router = Router();
 //    Register Account
 // ======================
 router.post("/register", async (req, res) => {
-  let { firstName, lastName, email, password } = req.body;
+  let { firstName, lastName, email, password, role} = req.body;
   try {
     const newUser = await User.create({
       firstName,
       lastName,
       email,
       password: bcrypt.hashSync(password, 13),
+      role
     });
-    let token = jwt.sign({ id: newUser.id, email: newUser.email }, process.env.JWT_SECRET, {
+    let token = jwt.sign({ id: newUser.id}, process.env.JWT_SECRET, {
       expiresIn: 60 * 60 * 24,
     });
 

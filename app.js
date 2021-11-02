@@ -22,7 +22,7 @@ const resetDatabase = {force:true}
 db.authenticate()
 // add a resetDatabase inside the db.sync to drop all your tables if needed
 // example:  .then(() => db.sync(resetDatabase))
-  .then(() => db.sync())
+  .then(() => db.sync(resetDatabase))
   
   .then(() =>
     app.listen(process.env.PORT, () => {
