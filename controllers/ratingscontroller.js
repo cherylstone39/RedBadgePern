@@ -14,7 +14,7 @@ router.post('/create', validateSession, async (req, res) => {
         await RatingsModel.create({
             ratingOfDessert: req.body.ratings.ratingOfDessert,
             feedback : req.body.ratings.feedback,
-            recipeId: req.body.recipe.id,
+            recipeId: req.body.ratings.recipeId,
             userId: req.user.id
         })
         .then( ratings => {

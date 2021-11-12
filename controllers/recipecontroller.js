@@ -23,19 +23,14 @@ router.post('/create' , validateSession, function (req, res) {
 });
 
 router.get('/get', validateSession, function (req, res) {
-    const recipeCreated = {
-        where: {
-            userId: req.body.user
-            
-        }
-    }
-    Recipe.findAll(recipeCreated)
+  
+    Recipe.findAll()
     .then((recipe) => res.status(200).json(recipe))
     .catch((err) => res.status(500).json({error: err}))
 })
 
-/*UPDATE*/
-// router.put("update/:id", validateSession, function (req, res) {
+// /*UPDATE*/
+// router.put("/update/:id", validateSession, function (req, res) {
     
 //     let query;
 //      if (req.user.role == "admin"){
@@ -54,7 +49,7 @@ router.get('/get', validateSession, function (req, res) {
 //     };
 //     try {
 //         const update = RecipeModel.update(updatedRecipe, query);
-//              res.status(200).json(update);
+//              res.status(200).json({message: "Recipe updated"});
 //              } catch (err) {
 //                  res.status(500).json({error: err.message})
 //              }
