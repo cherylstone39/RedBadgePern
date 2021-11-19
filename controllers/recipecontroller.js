@@ -23,7 +23,12 @@ router.post('/create' , validateSession, function (req, res) {
 });
 
 router.get('/get', validateSession, function (req, res) {
-  
+    // const recipeCreated = {
+    //     where: {
+    //         userId: req.body.user
+
+    //     }
+    // }
     Recipe.findAll()
     .then((recipe) => res.status(200).json(recipe))
     .catch((err) => res.status(500).json({error: err}))
@@ -62,7 +67,7 @@ router.delete("/delete/:id", validateSession, function (req, res) {
     if (req.user.role == "admin") {
       query = {where: {id: req.params.id}};
     } else {
-        query = {where: {id: req.params.id, owner: user.id}}
+        query = {where: {id: req.params.id, userId: req.user.id}}
     }
     Recipe.destroy(query)
       .then((recipe) => res.status(200).json({message: "Recipe Removed"}))
@@ -81,7 +86,7 @@ router.put("/update/:id", validateSession, async (req, res) => {
         servings: req.body.recipe.servings,
         photo: req.body.recipe.photo
     };
-    const query = { where: { id: req.params.id, owner: req.user.id }};
+    const query = { where: { id: req.params.id, userId: req.user.id }};
 
 
         Recipe.update(updatedRecipe, query)

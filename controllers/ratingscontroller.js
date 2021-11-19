@@ -49,7 +49,7 @@ router.delete("/delete/:id", validateSession, function (req, res) {
     if (req.user.role == "admin") {
       query = {where: {id: req.params.id}};
     } else {
-        query = {where: {id: req.params.id, owner: user.id}}
+        query = {where: {id: req.params.id, userId: user.id}}
     }
     Ratings.destroy(query)
       .then((ratings) => res.status(200).json({message: "Rating Removed"}))
