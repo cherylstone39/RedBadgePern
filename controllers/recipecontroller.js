@@ -24,42 +24,42 @@ router.post('/create' , validateSession, function (req, res) {
 
 router.get('/get', validateSession, function (req, res) {
     // const recipeCreated = {
-    //     where: {
-    //         userId: req.body.user
-
-    //     }
-    // }
+        // Recipe.findAll({
+        //     where: {
+        //         id: req.user.id
+        //     }, include: ['user', 'recipes']
+        // })
     Recipe.findAll()
     .then((recipe) => res.status(200).json(recipe))
     .catch((err) => res.status(500).json({error: err}))
 })
 
-// /*UPDATE*/
-// router.put("/update/:id", validateSession, function (req, res) {
+/*UPDATE*/
+router.put("/update/:id", validateSession, function (req, res) {
     
-//     let query;
-//      if (req.user.role == "admin"){
-//         query = { where: {id: req.params.id}};
-//     } else {
-//     query = {where: {id: req.params.id, owner: user.id }}
+    let query;
+     if (req.user.role == "admin"){
+        query = { where: {id: req.params.id}};
+    } else {
+    query = {where: {id: req.params.id, userId: req.user.id }}
 
-// }    const updatedRecipe = {
-//         nameOfDessert: req.body.recipe.nameOfDessert,
-//         recipe: req.body.recipe.recipe,
-//         directions: req.body.recipe.directions,
-//         timeToBake: req.body.recipe.timeToBake,
-//         servings: req.body.recipe.servings,
-//         photo: req.body.recipe.photo
-//         // userId: req.user.id
-//     };
-//     try {
-//         const update = RecipeModel.update(updatedRecipe, query);
-//              res.status(200).json({message: "Recipe updated"});
-//              } catch (err) {
-//                  res.status(500).json({error: err.message})
-//              }
+}    const updatedRecipe = {
+        nameOfDessert: req.body.recipe.nameOfDessert,
+        recipe: req.body.recipe.recipe,
+        directions: req.body.recipe.directions,
+        timeToBake: req.body.recipe.timeToBake,
+        servings: req.body.recipe.servings,
+        photo: req.body.recipe.photo
+        // userId: req.user.id
+    };
+    try {
+        const update = RecipeModel.update(updatedRecipe, query);
+             res.status(200).json({message: "Recipe updated"});
+             } catch (err) {
+                 res.status(500).json({error: err.message})
+             }
 
-// })
+})
 
 /* DELETE */
 router.delete("/delete/:id", validateSession, function (req, res) {
@@ -76,25 +76,25 @@ router.delete("/delete/:id", validateSession, function (req, res) {
   
  
 /*Update Recipe*/
-router.put("/update/:id", validateSession, async (req, res) => {
+// router.put("/update/:id", validateSession, async (req, res) => {
     
-    const updatedRecipe = {
-        nameOfDessert: req.body.recipe.nameOfDessert,
-        recipe: req.body.recipe.recipe,
-        directions: req.body.recipe.directions,
-        timeToBake: req.body.recipe.timeToBake,
-        servings: req.body.recipe.servings,
-        photo: req.body.recipe.photo
-    };
-    const query = { where: { id: req.params.id, userId: req.user.id }};
+//     const updatedRecipe = {
+//         nameOfDessert: req.body.recipe.nameOfDessert,
+//         recipe: req.body.recipe.recipe,
+//         directions: req.body.recipe.directions,
+//         timeToBake: req.body.recipe.timeToBake,
+//         servings: req.body.recipe.servings,
+//         photo: req.body.recipe.photo
+//     };
+//     const query = { where: { id: req.params.id, userId: req.user.id }};
 
 
-        Recipe.update(updatedRecipe, query)
-        .then((recipes) => res.status(200).json({message: "Recipe Updated"}))
-        .catch((err) => res.status(500).json({error: err}));
+//         Recipe.update(updatedRecipe, query)
+//         .then((recipes) => res.status(200).json({message: "Recipe Updated"}))
+//         .catch((err) => res.status(500).json({error: err}));
         
     
-})
+// })
 
 // // /*Delete */
 // router.delete("/delete/:id", validateSession, function (req, res) {
